@@ -1,0 +1,36 @@
+---
+interface Props {
+  children: any;
+  delay?: number;
+  duration?: number;
+  easing?: string;
+  threshold?: number;
+  rootMargin?: string;
+  once?: boolean;
+  class?: string;
+}
+
+const {
+  children,
+  delay = 0,
+  duration = 800,
+  easing = "cubic-bezier(0.16, 1, 0.3, 1)",
+  threshold = 0.1,
+  rootMargin = "0px 0px -50px 0px",
+  once = true,
+  class: className = ""
+} = Astro.props;
+---
+
+<div 
+  class={`scroll-reveal ${className}`}
+  data-delay={delay}
+  data-duration={duration}
+  data-easing={easing}
+  data-threshold={threshold}
+  data-root-margin={rootMargin}
+  data-once={once}
+  style="opacity: 0; transform: translateY(30px);"
+>
+  {children}
+</div>

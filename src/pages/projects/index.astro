@@ -1,0 +1,241 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import ScrollReveal from '../../components/ScrollReveal.astro';
+import { projects, categories } from '../../data/projects.ts';
+---
+
+<Layout title="Projects — Pavan Kumar">
+  <section class="page-hero">
+    <div class="container">
+      <ScrollReveal delay={0}>
+        <h1>Projects</h1>
+        <p>Production-grade platforms and experiments in agentic AI, data engineering, and GenAI</p>
+      </ScrollReveal>
+    </div>
+  </section>
+
+  <section class="section projects-section">
+    <div class="container">
+      <ScrollReveal delay={0} class="category-filters" role="tablist" aria-label="Project categories">
+        {categories.map((category, i) => (
+          <button
+            role="tab"
+            aria-selected={i === 0}
+            aria-controls={`panel-${category.toLowerCase().replace(/\s+/g, '-')}`}
+            id={`tab-${category.toLowerCase().replace(/\s+/g, '-')}`}
+            class={`filter-btn ${i === 0 ? 'active' : ''}`}
+            data-category={category}
+            style={`--delay: ${i * 50}ms`}
+          >
+            {category}
+          </button>
+        ))}
+      </ScrollReveal>
+
+      <ScrollReveal delay={200} class="projects-grid grid-responsive stagger" id="projects-grid">
+        {projects.map((project, i) => (
+          <div style={`--item-index: ${i}`} class="project-wrapper">
+            <ProjectCard {...project} />
+          </div>
+        ))}
+      </ScrollReveal>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-hero {
+    padding: 8rem 0 4rem;
+    text-align: center;
+    position: relative;
+  }
+  
+  .page-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(139, 155, 255, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  
+  .page-hero h1 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--foreground), var(--muted));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .page-hero p {
+    font-size: 1.25rem;
+    color: var(--muted);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .category-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-bottom: 3rem;
+  }
+  
+  .filter-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.625rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2rem;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    transform: translateY(10px);
+    animation: filterBtnIn 0.4s ease-out forwards;
+    animation-delay: var(--delay, 0ms);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .filter-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  @keyframes filterBtnIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .filter-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    transform: translateY(-2px);
+  }
+  
+  .filter-btn:hover::before {
+    opacity: 0.1;
+  }
+  
+  .filter-btn.active {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-color: transparent;
+    color: var(--background);
+  }
+  
+  .filter-btn span {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .projects-grid {
+    opacity: 1;
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  
+  .projects-grid.filtering {
+    opacity: 0.3;
+    pointer-events: none;
+    transform: scale(0.98);
+  }
+  
+  .project-wrapper {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  }
+  
+  .project-wrapper.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+  }
+  
+  @media (max-width: 768px) {
+    .page-hero {
+      padding: 6rem 0 3rem;
+    }
+    
+    .filter-btn {
+      padding: 0.5rem 1.25rem;
+      font-size: 0.8125rem;
+    }
+  }
+</style>
+
+<script>
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const projectWrappers = document.querySelectorAll('.project-wrapper');
+  const grid = document.getElementById('projects-grid');
+  
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const category = btn.dataset.category;
+      
+      // Update active button
+      filterButtons.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      
+      // Filter with animation
+      grid.classList.add('filtering');
+      
+      projectWrappers.forEach((wrapper, i) => {
+        const card = wrapper.querySelector('.project-card');
+        const cardCategory = card?.dataset.category;
+        const shouldShow = category === 'All' || cardCategory === category;
+        
+        setTimeout(() => {
+          if (shouldShow) {
+            wrapper.classList.remove('hidden');
+            wrapper.style.position = '';
+            wrapper.style.animation = 'slideUp 0.4s ease-out forwards';
+          } else {
+            wrapper.classList.add('hidden');
+          }
+        }, i * 30);
+      });
+      
+      setTimeout(() => {
+        grid.classList.remove('filtering');
+      }, 400);
+    });
+  });
+  
+  // Initialize stagger animation
+  const staggerGrid = document.querySelector('.projects-grid.stagger');
+  if (staggerGrid) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '50px' });
+    
+    observer.observe(staggerGrid);
+  }
+</script>

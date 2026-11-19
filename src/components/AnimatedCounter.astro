@@ -1,0 +1,122 @@
+---
+interface Props {
+  value: number;
+  suffix?: string;
+  prefix?: string;
+  duration?: number;
+  class?: string;
+  label?: string;
+}
+
+const {
+  value,
+  suffix = "",
+  prefix = "",
+  duration = 2000,
+  class: className = "",
+  label
+} = Astro.props;
+---
+
+<div class={`stat-counter ${className}`} data-value={value} data-duration={duration} data-suffix={suffix} data-prefix={prefix}>
+  <div class="stat-counter-value">
+    <span class="stat-counter-number" data-target={value}>{prefix}0{suffix}</span>
+  </div>
+  {label && <div class="stat-counter-label">{label}</div>}
+</div>
+
+<style>
+  .stat-counter {
+    text-align: center;
+  }
+  
+  .stat-counter-value {
+    display: inline-flex;
+    align-items: baseline;
+  }
+  
+  .stat-counter-number {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+  
+  .stat-counter-label {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+</style>
+
+<script>
+  class AnimatedCounter {
+    element: HTMLElement;
+    numberElement: HTMLElement;
+    targetValue: number;
+    duration: number;
+    suffix: string;
+    prefix: string;
+    hasAnimated: boolean;
+    
+    constructor(element: HTMLElement) {
+      this.element = element;
+      this.numberElement = element.querySelector('.stat-counter-number')!;
+      this.targetValue = parseInt(element.dataset.value || '0');
+      this.duration = parseInt(element.dataset.duration || '2000');
+      this.suffix = element.dataset.suffix || '';
+      this.prefix = element.dataset.prefix || '';
+      this.hasAnimated = false;
+      
+      this.init();
+    }
+    
+    init() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !this.hasAnimated) {
+            this.hasAnimated = true;
+            this.animate();
+          }
+        });
+      }, { threshold: 0.5, rootMargin: '50px' });
+      
+      observer.observe(this.element);
+    }
+    
+    animate() {
+      const startTime = performance.now();
+      const startValue = 0;
+      
+      const animate = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / this.duration, 1);
+        
+        // Easing function (easeOutExpo)
+        const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        const currentValue = Math.floor(startValue + (this.targetValue - startValue) * eased);
+        
+        this.numberElement.textContent = `${this.prefix}${currentValue.toLocaleString()}${this.suffix}`;
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          this.numberElement.textContent = `${this.prefix}${this.targetValue.toLocaleString()}${this.suffix}`;
+        }
+      };
+      
+      requestAnimationFrame(animate);
+    }
+  }
+  
+  document.querySelectorAll('.stat-counter').forEach(el => {
+    new AnimatedCounter(el);
+  });
+</script>

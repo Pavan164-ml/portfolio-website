@@ -1,0 +1,23 @@
+---
+interface Props {
+  skills: { category: string; items: string[] }[];
+  class?: string;
+}
+
+const { skills, class: className = "" } = Astro.props;
+---
+
+<div class={`tech-stack ${className}`}>
+  {skills.map((group, groupIndex) => (
+    <div class="tech-group" style={'--delay: ' + (groupIndex * 100) + 'ms'}>
+      <h4 class="tech-category">{group.category}</h4>
+      <div class="tech-orbs">
+        {group.items.map((skill, skillIndex) => (
+          <span class="tech-orb" style={'--orb-delay: ' + ((groupIndex * 100) + (skillIndex * 50)) + 'ms'}>
+            {skill}
+          </span>
+        ))}
+      </div>
+    </div>
+  ))}
+</div>

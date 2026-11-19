@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 11 16 32;
+    --surface: 21 29 53;
+    --primary: 139 155 255;
+    --accent: 167 139 250;
+    --foreground: 248 250 252;
+    --muted: 148 163 184;
+    --border: 45 58 94;
+    --card-bg: 21 29 53;
+  }
+  
+  * {
+    border-color: rgb(var(--border) / 0.2);
+  }
+  
+  body {
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-base transition-all duration-300 cursor-pointer border-0 text-center;
+  }
+  
+  .btn-primary {
+    @apply bg-gradient-to-br from-primary to-accent text-background shadow-lg shadow-primary/40;
+  }
+  
+  .btn-primary:hover {
+    @apply -translate-y-1 shadow-xl shadow-primary/50;
+  }
+  
+  .btn-secondary {
+    @apply bg-surface border border-border text-foreground;
+  }
+  
+  .btn-secondary:hover {
+    @apply border-primary text-primary -translate-y-1 shadow-lg shadow-primary/20;
+  }
+  
+  .card {
+    @apply bg-card-bg border border-border rounded-2xl p-8 transition-all duration-300;
+  }
+  
+  .card:hover {
+    @apply -translate-y-1 shadow-2xl shadow-black/30;
+  }
+  
+  .container {
+    @apply max-w-7xl mx-auto px-6 sm:px-8;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}

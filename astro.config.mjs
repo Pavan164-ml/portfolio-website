@@ -1,5 +1,5 @@
 import { defineConfig } from 'astro/config';
-import tailwind from 'tailwindcss';
+import tailwind from '@astrojs/tailwind';
 import mdx from '@astrojs/mdx';
 
 export default defineConfig({
@@ -8,17 +8,10 @@ export default defineConfig({
     mdx(),
   ],
   build: {
-    format: 'static',
+    format: 'directory',
   },
   // Enable image optimization for better performance
   image: {
-    domains: ['your-domain.com', 'github.com', 'raw.githubusercontent.com'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-        pathname: '/videos/**',
-      },
-    ],
+    domains: ['github.com', 'raw.githubusercontent.com', 'avatars.githubusercontent.com'],
   },
 });
