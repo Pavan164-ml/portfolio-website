@@ -3,6 +3,8 @@ import tailwind from '@astrojs/tailwind';
 import mdx from '@astrojs/mdx';
 
 export default defineConfig({
+  site: 'https://pavan164-ml.github.io',
+  base: '/portfolio-website',
   integrations: [
     tailwind(),
     mdx(),
@@ -10,7 +12,6 @@ export default defineConfig({
   build: {
     format: 'directory',
   },
-  // Enable image optimization for better performance
   image: {
     domains: ['github.com', 'raw.githubusercontent.com', 'avatars.githubusercontent.com'],
   },
