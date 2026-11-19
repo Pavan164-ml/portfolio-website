@@ -1,0 +1,31 @@
+---
+import '../styles/globals.css';
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="description" content="Portfolio of Pavan Kumar - AI Data Engineer" />
+  <meta name="viewport" content="width=device-width" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>{title}</title>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/projects">Projects</a>
+      <a href="/about">About</a>
+      <a href="/contact">Contact</a>
+    </nav>
+  </header>
+  <main>
+    <slot />
+  </main>
+  <footer>
+    <p>&copy; 2024 Pavan Kumar. All rights reserved.</p>
+  </footer>
+</body>
+</html>
